@@ -13,14 +13,40 @@ st.set_page_config(layout="wide")
 
 
 class ImageBrowser:
-    def __init__(self, root_path):
+    def __init__(self, root_path, dest_path):
+        self.dest_images = None
+        self.images = None
+
+        self.tot_dest_images = 0
+        self.tot_root_images = 0
+
+        self.load_source_images(root_path)
+        self.load_selected_images(dest_path)
+        if self.dest_images:
+            print(f"Found {len(self.dest_images)} images in {dest_path}")
+            self.current_index = self.images.index(self.dest_images[-1].replace(dest_path, root_path))
+        else:
+            self.current_index = 0
+
+    def load_source_images(self, root_path):
         self.images = []
         for root, _, files in os.walk(root_path):
             for file in files:
-                if file.lower().endswith(('png', 'jpg', 'jpeg', 'png', 'heic', 'heic', 'mov')):
+                if file.lower().endswith(('png', 'jpg', 'jpeg', 'png', 'heif', 'heic', 'mov')):
                     self.images.append(os.path.join(root, file))
         self.images.sort()
-        self.current_index = 0
+        self.tot_root_images = len(self.images)
+
+
+    def load_selected_images(self, dest_path):
+        self.dest_images = []
+        for root, _, files in os.walk(dest_path):
+            for file in files:
+                if file.lower().endswith(('png', 'jpg', 'jpeg', 'png', 'heif', 'heic', 'mov')):
+                    self.dest_images.append(os.path.join(root, file))
+        self.dest_images.sort()
+        self.tot_dest_images = len(self.dest_images)
+
 
     def get_image(self, offset=0):
         return self.images[self.current_index + offset] if 0 <= self.current_index + offset < len(self.images) else None
@@ -38,6 +64,7 @@ class ImageBrowser:
         dest = os.path.join(dest_path, os.path.relpath(src, root_path))
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         shutil.copy2(src, dest)
+        self.load_selected_images(dest_path)
 
 
 def on_like():
@@ -84,6 +111,18 @@ def show_directory_picker(queue, title):
 
 def main():
     st.title("Image Selector")
+    if 'img_browser' in st.session_state:
+        cursor_col, percentage_col = st.columns(2)
+        with cursor_col:
+            st.progress(
+                value=st.session_state.img_browser.current_index / st.session_state.img_browser.tot_root_images,
+                text=f'Viewing {st.session_state.img_browser.current_index} out of {st.session_state.img_browser.tot_root_images} images'
+            )
+        with percentage_col:
+            st.progress(
+                value=st.session_state.img_browser.tot_dest_images / st.session_state.img_browser.tot_root_images,
+                text=f'Copied {st.session_state.img_browser.tot_dest_images} out of {st.session_state.img_browser.tot_root_images} images'
+            )
 
     col_root, col_dest = st.columns(2)
     with col_root:
@@ -100,11 +139,11 @@ def main():
 
     # Check if both paths are available in session state
     if 'root_path' in st.session_state and 'dest_path' in st.session_state:
-        root_path = st.session_state.root_path
-        dest_path = st.session_state.dest_path
-
         if 'img_browser' not in st.session_state:
-            st.session_state.img_browser = ImageBrowser(root_path)
+            st.session_state.img_browser = ImageBrowser(
+                root_path=st.session_state.root_path,
+                dest_path=st.session_state.dest_path,
+            )
 
         prev_img_path = st.session_state.img_browser.get_image(-1)
         curr_img_path = st.session_state.img_browser.get_image()
