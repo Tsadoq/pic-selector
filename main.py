@@ -19,6 +19,7 @@ class ImageBrowser:
             for file in files:
                 if file.lower().endswith(('png', 'jpg', 'jpeg', 'png', 'heic', 'heic', 'mov')):
                     self.images.append(os.path.join(root, file))
+        self.images.sort()
         self.current_index = 0
 
     def get_image(self, offset=0):
@@ -63,31 +64,32 @@ def show_directory_picker(queue, title):
 def main():
     st.title("Image Selector")
 
-    if st.button('Select Root Path'):
-        root_path = select_directory(title="Select Root Folder")
-        st.session_state.root_path = root_path  # Save the selected path in session state
+    col_root, col_dest = st.columns(2)
+    with col_root:
+        if st.button('Select Root Path'):
+            root_path = select_directory(title="Select Root Folder")
+            st.session_state.root_path = root_path  # Save the selected path in session state
 
-    if st.button('Select Destination Path'):
-        dest_path = select_directory(title="Select Destination Folder")
-        st.session_state.dest_path = dest_path  # Save the selected path in session state
+    with col_dest:
+        if st.button('Select Destination Path'):
+            dest_path = select_directory(title="Select Destination Folder")
+            st.session_state.dest_path = dest_path  # Save the selected path in session state
 
     # Check if both paths are available in session state
     if 'root_path' in st.session_state and 'dest_path' in st.session_state:
         root_path = st.session_state.root_path
-        dest_path = st.session_state.dest_path
+        dest_path = st.session_state.dest_patsh
         st.write(f"Root Path: {root_path}")
         st.write(f"Destination Path: {dest_path}")
 
         if 'img_browser' not in st.session_state:
             st.session_state.img_browser = ImageBrowser(root_path)
 
-        img_browser = st.session_state.img_browser
+        prev_img_path = st.session_state.img_browser.get_image(-1)
+        curr_img_path = st.session_state.img_browser.get_image()
+        next_img_path = st.session_state.img_browser.get_image(1)
 
-        prev_img_path = img_browser.get_image(-1)
-        curr_img_path = img_browser.get_image()
-        next_img_path = img_browser.get_image(1)
-
-        button_col1, button_col2, button_col3, button_col4 = st.columns([.20, .20, .20, .20])
+        _, button_col1, button_col2, button_col3, button_col4, _ = st.columns([.30, .10, .10, .10, .10, .30])
         with button_col1:
             liked = st.button("👍", key="like", help="Copy to destination folder")
         with button_col2:
@@ -109,14 +111,14 @@ def main():
                 st.image(next_img_path, use_column_width=True)
 
         if liked:
-            img_browser.copy_to_dest(dest_path, root_path)
-            img_browser.next()
+            st.session_state.img_browser.copy_to_dest(dest_path, root_path)
+            st.session_state.img_browser.next()
         elif disliked:
-            img_browser.next()
+            st.session_state.img_browser.next()
         elif prev:
-            img_browser.prev()
+            st.session_state.img_browser.prev()
         elif nxt:
-            img_browser.next()
+            st.session_state.img_browser.next()
 
 
 if __name__ == "__main__":
