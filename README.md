@@ -1,5 +1,5 @@
 # Pic Selector
-![example workflow](https://github.com/tsadoq/pic-selector/actions/workflows/python-app.yml/badge.svg)
+![example workflow](https://github.com/tsadoq/pic-selector/actions/workflows/python-app.yml/badge.svg?event=push)
 
 ## Overview
 This Pic Selector is a Streamlit-based application designed to streamline the process of sorting through a large collection of images. Users can quickly browse through images, choose which ones to keep, and seamlessly copy selected images to a specified destination while maintaining the original folder structure.
