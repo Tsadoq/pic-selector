@@ -58,5 +58,6 @@ Contributions to the Pic Selector are welcome! If you have a suggestion that wou
 ## Acknowledgements
 - [Streamlit](https://streamlit.io/)
 - [Python Imaging Library (PIL)](https://python-pillow.org/)
-- [Your dependencies or resources that you used]
+- [tkinter](https://docs.python.org/3/library/tkinter.html)
+- [pillow_heif](https://pypi.org/project/pillow-heif/)
 
