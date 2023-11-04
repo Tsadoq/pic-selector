@@ -2,6 +2,10 @@ import os
 import shutil
 from typing import Optional
 
+from pillow_heif import register_heif_opener
+
+register_heif_opener()
+
 
 class ImageBrowser:
     """
@@ -44,7 +48,7 @@ class ImageBrowser:
         self.images = []
         for root, _, files in os.walk(root_path):
             for file in files:
-                if file.lower().endswith(('png', 'jpg', 'jpeg', 'png', 'heif', 'heic', 'mov')):
+                if file.lower().endswith(('png', 'jpg', 'jpeg', 'png', 'heif', 'heic', 'HEIC', 'HEIF')):
                     self.images.append(os.path.join(root, file))
         self.images.sort()
         self.tot_root_images = len(self.images)

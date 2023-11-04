@@ -70,6 +70,7 @@ def select_pictures():
                 st.image(curr_img_path, use_column_width=True)
         if next_img_path:
             with col3:
+                print(next_img_path)
                 st.image(next_img_path, use_column_width=True)
 
 

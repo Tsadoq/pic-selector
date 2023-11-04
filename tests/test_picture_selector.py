@@ -12,9 +12,14 @@ def test_picture_selector_read_files():
     at = AppTest.from_file("../picture_selector.py")
     at.session_state.root_path = os.path.abspath('./resources/root_test')
     at.session_state.dest_path = os.path.abspath('./resources/dest_test')
-    at.columns[1].button(key='next')
-    at.button(key='like')
-    at.button(key='next')
-    at.button(key='like')
+    at.run()
+    at.button(key='next').click()
+    at.run()
+    at.button(key='like').click()
+    at.run()
+    at.button(key='next').click()
+    at.run()
+    at.button(key='like').click()
+    at.run()
 
-    assert at.session_state.img_browser.tot_root_images == 2
+    assert at.session_state.img_browser.tot_dest_images == 2
