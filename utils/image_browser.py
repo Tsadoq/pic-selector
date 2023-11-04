@@ -11,6 +11,7 @@ class ImageBrowser:
     """
     Class used to browse images in a folder and copy them to a destination folder.
     """
+
     def __init__(
         self,
         root_path: str,
@@ -53,7 +54,6 @@ class ImageBrowser:
         self.images.sort()
         self.tot_root_images = len(self.images)
 
-
     def load_selected_images(
         self,
         dest_path: str,
@@ -71,10 +71,9 @@ class ImageBrowser:
         self.dest_images.sort()
         self.tot_dest_images = len(self.dest_images)
 
-
     def get_image(
         self,
-        offset: Optional[int]=0,
+        offset: Optional[int] = 0,
     ) -> Optional[str]:
         """
         Get the image at the current index + offset.

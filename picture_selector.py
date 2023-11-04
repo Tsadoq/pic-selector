@@ -18,12 +18,14 @@ def select_pictures():
         with cursor_col:
             st.progress(
                 value=st.session_state.img_browser.current_index / st.session_state.img_browser.tot_root_images,
-                text=f'Viewing {st.session_state.img_browser.current_index} out of {st.session_state.img_browser.tot_root_images} images'
+                text=f'Viewing {st.session_state.img_browser.current_index} out of '
+                     f'{st.session_state.img_browser.tot_root_images} images'
             )
         with percentage_col:
             st.progress(
                 value=st.session_state.img_browser.tot_dest_images / st.session_state.img_browser.tot_root_images,
-                text=f'Copied {st.session_state.img_browser.tot_dest_images} out of {st.session_state.img_browser.tot_root_images} images'
+                text=f'Copied {st.session_state.img_browser.tot_dest_images} out of '
+                     f'{st.session_state.img_browser.tot_root_images} images'
             )
 
     col_root, col_dest = st.columns(2)
