@@ -40,6 +40,27 @@ class ImageBrowser:
         shutil.copy2(src, dest)
 
 
+def on_like():
+    if 'img_browser' in st.session_state:
+        st.session_state.img_browser.copy_to_dest(st.session_state.dest_path, st.session_state.root_path)
+        st.session_state.img_browser.next()
+
+
+def on_dislike():
+    if 'img_browser' in st.session_state:
+        st.session_state.img_browser.next()
+
+
+def on_prev():
+    if 'img_browser' in st.session_state:
+        st.session_state.img_browser.prev()
+
+
+def on_next():
+    if 'img_browser' in st.session_state:
+        st.session_state.img_browser.next()
+
+
 def select_directory(title="Select Folder"):
     # Create a queue to share data between processes
     queue = multiprocessing.Queue()
@@ -69,18 +90,18 @@ def main():
         if st.button('Select Root Path'):
             root_path = select_directory(title="Select Root Folder")
             st.session_state.root_path = root_path  # Save the selected path in session state
+            st.write(f"Root Path: {st.session_state.root_path}")
 
     with col_dest:
         if st.button('Select Destination Path'):
             dest_path = select_directory(title="Select Destination Folder")
             st.session_state.dest_path = dest_path  # Save the selected path in session state
+            st.write(f"Destination Path: {st.session_state.dest_path}")
 
     # Check if both paths are available in session state
     if 'root_path' in st.session_state and 'dest_path' in st.session_state:
         root_path = st.session_state.root_path
-        dest_path = st.session_state.dest_patsh
-        st.write(f"Root Path: {root_path}")
-        st.write(f"Destination Path: {dest_path}")
+        dest_path = st.session_state.dest_path
 
         if 'img_browser' not in st.session_state:
             st.session_state.img_browser = ImageBrowser(root_path)
@@ -91,13 +112,13 @@ def main():
 
         _, button_col1, button_col2, button_col3, button_col4, _ = st.columns([.30, .10, .10, .10, .10, .30])
         with button_col1:
-            liked = st.button("👍", key="like", help="Copy to destination folder")
+            st.button("👍", key="like", help="Copy to destination folder", on_click=on_like)
         with button_col2:
-            disliked = st.button("👎", key="dislike", help="Skip")
+            st.button("👎", key="dislike", help="Skip", on_click=on_dislike)
         with button_col3:
-            prev = st.button("⬅️", key="prev")
+            st.button("⬅️", key="prev", help="Previous", on_click=on_prev)
         with button_col4:
-            nxt = st.button("➡️", key="next")
+            st.button("➡️", key="next", help="Next", on_click=on_next)
 
         col1, col2, col3 = st.columns([.20, .6, .20])
         if prev_img_path:
@@ -109,16 +130,6 @@ def main():
         if next_img_path:
             with col3:
                 st.image(next_img_path, use_column_width=True)
-
-        if liked:
-            st.session_state.img_browser.copy_to_dest(dest_path, root_path)
-            st.session_state.img_browser.next()
-        elif disliked:
-            st.session_state.img_browser.next()
-        elif prev:
-            st.session_state.img_browser.prev()
-        elif nxt:
-            st.session_state.img_browser.next()
 
 
 if __name__ == "__main__":
