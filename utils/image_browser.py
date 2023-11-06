@@ -2,11 +2,16 @@ import os
 import shutil
 from typing import Optional
 
+from pillow_heif import register_heif_opener
+
+register_heif_opener()
+
 
 class ImageBrowser:
     """
     Class used to browse images in a folder and copy them to a destination folder.
     """
+
     def __init__(
         self,
         root_path: str,
@@ -44,11 +49,10 @@ class ImageBrowser:
         self.images = []
         for root, _, files in os.walk(root_path):
             for file in files:
-                if file.lower().endswith(('png', 'jpg', 'jpeg', 'png', 'heif', 'heic', 'mov')):
+                if file.lower().endswith(('png', 'jpg', 'jpeg', 'png', 'heif', 'heic', 'HEIC', 'HEIF')):
                     self.images.append(os.path.join(root, file))
         self.images.sort()
         self.tot_root_images = len(self.images)
-
 
     def load_selected_images(
         self,
@@ -67,10 +71,9 @@ class ImageBrowser:
         self.dest_images.sort()
         self.tot_dest_images = len(self.dest_images)
 
-
     def get_image(
         self,
-        offset: Optional[int]=0,
+        offset: Optional[int] = 0,
     ) -> Optional[str]:
         """
         Get the image at the current index + offset.
